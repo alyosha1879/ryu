@@ -47,6 +47,7 @@ class _Caller(object):
 
 # should be named something like 'observe_event'
 
+# 引数付きのデコレータ関数
 # 使用例
 #     @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
 #     def _packet_in_handler(self, ev):
