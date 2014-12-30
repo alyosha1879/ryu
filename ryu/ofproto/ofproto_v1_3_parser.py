@@ -14,6 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# openflow1.3のdecoder/encoder。
+# openflowの仕様に基づいたopenflowのメッセージ処理は、ryu/ryu/controller/ofp_handler.pyに記載されている。
+
 """
 This module implements OpenFlow 1.3.x.
 
