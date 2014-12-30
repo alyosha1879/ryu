@@ -46,6 +46,10 @@ class _Caller(object):
 
 
 # should be named something like 'observe_event'
+
+# 使用例
+#     @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
+#     def _packet_in_handler(self, ev):
 def set_ev_cls(ev_cls, dispatchers=None):
     def _set_ev_cls_dec(handler):
         if 'callers' not in dir(handler):
