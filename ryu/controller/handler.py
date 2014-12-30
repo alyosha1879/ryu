@@ -47,6 +47,9 @@ class _Caller(object):
 
 # should be named something like 'observe_event'
 
+# Ryuアプリケーションに特定のイベント(ev_cls)をlistenさせるデコレータ 
+# イベント発生時にデコレータ対象のhandlerが呼び出される
+
 # 引数付きのデコレータ関数
 # 使用例
 #     @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
