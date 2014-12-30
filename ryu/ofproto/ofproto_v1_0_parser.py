@@ -14,6 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# あくまでもdecoder/encoder。
+# echoリクエスト等に対してどのような処理をするか、に関する記載はない。
+
 """
 Decoder/Encoder implementations of OpenFlow 1.0.
 """
