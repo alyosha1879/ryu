@@ -13,6 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# このクラスは、ryuのすべてのプロトコル用クラスの基底クラス。
+# パケットのdecode/encode用のクラスは、ryu/ryu/lib/packet/packet.pyに別途存在する。
+
 import abc
 import six
 from ryu.lib import stringify
