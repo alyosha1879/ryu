@@ -142,6 +142,7 @@ class Datapath(ofproto_protocol.ProtocolDesc):
 
         count = 0
         while self.is_active:
+            # 受信したソケットのデータからopenflowのヘッダーサイズ分だけ取得する
             ret = self.socket.recv(required_len)
             if len(ret) == 0:
                 self.is_active = False
