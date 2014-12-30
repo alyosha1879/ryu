@@ -63,6 +63,13 @@ def set_ev_cls(ev_cls, dispatchers=None):
         return handler
     return _set_ev_cls_dec
 
+# イベントを制御するハンドラ用のデコレータ
+
+# 使用例
+# class SampleRequest(EventRequestBase):
+#
+# @set_ev_cls(SampleRequest)
+# def sample_request_handler(self, request):
 
 def set_ev_handler(ev_cls, dispatchers=None):
     def _set_ev_cls_dec(handler):
