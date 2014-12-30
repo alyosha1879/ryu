@@ -46,6 +46,7 @@ class Packet(object):
 
     def _parser(self, cls):
         rest_data = self.data
+        # ether -> ip -> tcp(udp) のように再帰的に上位のプロトコルのparserを呼び出している
         while cls:
             try:
                 proto, cls, rest_data = cls.parser(rest_data)
@@ -53,6 +54,8 @@ class Packet(object):
                 break
             if proto:
                 self.protocols.append(proto)
+        # tcpやudpでは上位のプロトコルを識別する情報がヘッダー中に存在しないため、 dhcpやhttpに関するバイト列はparseされない。
+        # 結果的としてrest_dataにプロトコルの中身が入る。      
         if rest_data:
             self.protocols.append(rest_data)
 
@@ -61,7 +64,7 @@ class Packet(object):
 
         This method is legal only when encoding a packet.
         """
-
+　　　　
         self.data = bytearray()
         r = self.protocols[::-1]
         for i, p in enumerate(r):
