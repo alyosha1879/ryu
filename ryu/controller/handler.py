@@ -21,6 +21,19 @@ import sys
 LOG = logging.getLogger('ryu.controller.handler')
 
 # just represent OF datapath state. datapath specific so should be moved.
+# イベント生成のタイミングを指定するためのdispacher
+# 以下の各openflowのネゴシエーションフェイズにおいてイベントが生成される
+
+# 例:
+# @set_ev_handler(ofp_event.EventOFPHello, HANDSHAKE_DISPATCHER)
+# def hello_handler(self, ev):
+
+# @set_ev_handler(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
+# def switch_features_handler(self, ev):
+
+# @set_ev_handler(ofp_event.EventOFPEchoRequest,[HANDSHAKE_DISPATCHER, CONFIG_DISPATCHER, MAIN_DISPATCHER])
+# def echo_request_handler(self, ev):
+
 HANDSHAKE_DISPATCHER = "handshake"
 CONFIG_DISPATCHER = "config"
 MAIN_DISPATCHER = "main"
@@ -63,9 +76,11 @@ def set_ev_cls(ev_cls, dispatchers=None):
         return handler
     return _set_ev_cls_dec
 
-# イベントを制御するハンドラ用のデコレータ
+# メソッドをイベント制御用のハンドラー化させるデコレータ
 
 # 使用例
+# SampleRequest発生時にsample_request_handlerが呼び出される
+#
 # class SampleRequest(EventRequestBase):
 #
 # @set_ev_cls(SampleRequest)
