@@ -14,6 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# openflowの仕様に基づいたopenflowメッセージのハンドラー。
+# ユーザが記述する各メッセージに関する処理とは独立して存在する。
+# Ryuの起動時にデフォルトで起動するRyuAppのサブクラス。
+
 """
 Basic OpenFlow handling including negotiation.
 """
