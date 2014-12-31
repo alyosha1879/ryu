@@ -102,7 +102,10 @@ class RyuApp(object):
     It's set to __class__.__name__ by RyuApp.__init__.
     It's discouraged for subclasses to override this.
     """
-
+    # キー：コンテキスト名
+    # 値：コンテキストを実装しているクラス名
+    
+    #
     _CONTEXTS = {}
     """
     A dictionary to specify contexts which this Ryu application wants to use.
