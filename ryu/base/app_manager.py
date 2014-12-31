@@ -41,6 +41,8 @@ from ryu.ofproto import ofproto_protocol
 
 LOG = logging.getLogger('ryu.base.app_manager')
 
+# 辞書型
+# キー：クラス名、値：アプリケーションのファイル名
 SERVICE_BRICKS = {}
 
 
