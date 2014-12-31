@@ -80,6 +80,7 @@ def set_ev_cls(ev_cls, dispatchers=None):
 
 # 使用例
 # SampleRequest発生時にsample_request_handlerが呼び出される
+# デコレート対象のメソッドに辞書型アトリビュートを追加する（既にあれば何もしない）
 #
 # class SampleRequest(EventRequestBase):
 #
@@ -89,7 +90,10 @@ def set_ev_cls(ev_cls, dispatchers=None):
 def set_ev_handler(ev_cls, dispatchers=None):
     def _set_ev_cls_dec(handler):
         if 'callers' not in dir(handler):
+            # デコレート対象の「メソッド」に対して、辞書型のアトリビュートcallersを追加。
+            # ここで初めてcallersが追加されるため、最初からcallersをアトリビュートとして持っていないことに注意。
             handler.callers = {}
+        # 引数としてのev_clsをリスト化してforループで回している
         for e in _listify(ev_cls):
             handler.callers[e] = _Caller(_listify(dispatchers), None)
         return handler
@@ -99,7 +103,7 @@ def set_ev_handler(ev_cls, dispatchers=None):
 def _has_caller(meth):
     return hasattr(meth, 'callers')
 
-
+# 引数がリストでない場合はリストに入れて返す
 def _listify(may_list):
     if may_list is None:
         may_list = []
