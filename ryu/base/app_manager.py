@@ -367,7 +367,15 @@ class AppManager(object):
         self.contexts = {}
 
     def load_app(self, name):
+        # 組み込み関数の__import__を用いて、動的にモジュールをインポート。
+        # nameはRyuアプリケーションの名前。
         mod = utils.import_module(name)
+        
+        # inspect.getmembers(object[, predicate]) :オブジェクトの全メンバーを、 
+        # (名前, 値) の組み合わせのリストで返します。リストはメンバー名でソートされています。 
+        # predicate が指定されている場合、 predicate の戻り値が真となる値のみを返します。
+        
+        # アプリケーション名（Pythonのファイル名）から、クラス/RyuAppのサブクラス/ファイル名と一致するクラスを返す
         clses = inspect.getmembers(mod,
                                    lambda cls: (inspect.isclass(cls) and
                                                 issubclass(cls, RyuApp) and
@@ -382,7 +390,7 @@ class AppManager(object):
                      in itertools.chain.from_iterable(app.split(',')
                                                       for app in app_lists)]
         while len(app_lists) > 0:
-            # リストが空になるまで、app_listsから処理対象のアプリケーションをpopする
+            # リストが空になるまで、app_listsから処理対象のアプリケーションをpopする。
             app_cls_name = app_lists.pop(0)
 
             context_modules = map(lambda x: x.__module__,
