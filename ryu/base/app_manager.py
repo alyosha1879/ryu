@@ -347,6 +347,9 @@ class AppManager(object):
         finally:
             app_mgr.close()
 
+    # デザインパターンでいうところのシングルトン
+    # ryu/ryu/cmd/manager.pyで以下のようにしてapp_mgrの生成に利用されている
+    # app_mgr = AppManager.get_instance()
     @staticmethod
     def get_instance():
         if not AppManager._instance:
