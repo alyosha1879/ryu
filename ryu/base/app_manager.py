@@ -361,6 +361,8 @@ class AppManager(object):
         return AppManager._instance
 
     def __init__(self):
+        
+        # キー：アプリケーションのファイル名、値：アプリケーションのクラス
         self.applications_cls = {}
         self.applications = {}
         self.contexts_cls = {}
@@ -407,19 +409,29 @@ class AppManager(object):
             self.applications_cls[app_cls_name] = cls
 
             services = []
+            
+            # クラスの_CONTEXTSに登録されているキーと値を取得
             for key, context_cls in cls.context_iteritems():
+                
+                # 辞書型self.contexts_clsにkeyがあればその値を、なければkeyとcontext_clsを挿入しcontext_clsを返す
                 v = self.contexts_cls.setdefault(key, context_cls)
                 assert v == context_cls
+                # コンテキストを実装しているクラスのモジュール名をリストに追加
                 context_modules.append(context_cls.__module__)
 
                 if issubclass(context_cls, RyuApp):
+                    # ryu/ryu/controller/handler.pyに定義されているget_dependent_services
                     services.extend(get_dependent_services(context_cls))
 
             # we can't load an app that will be initiataed for
             # contexts.
+            
+        
             for i in get_dependent_services(cls):
                 if i not in context_modules:
                     services.append(i)
+                    
+            # pythonのリスト閉包中の倒置if文
             if services:
                 app_lists.extend([s for s in set(services)
                                   if s not in app_lists])
