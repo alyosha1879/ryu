@@ -118,7 +118,9 @@ def register_instance(i):
 
 def get_dependent_services(cls):
     services = []
+    # コンテキスト実装クラスからメソッドを（名前、値）で取り出し。
     for _k, m in inspect.getmembers(cls, inspect.ismethod):
+        # もしメソッドにcallersという属性がある場合
         if _has_caller(m):
             for ev_cls, c in m.callers.iteritems():
                 service = getattr(sys.modules[ev_cls.__module__],
@@ -129,8 +131,13 @@ def get_dependent_services(cls):
                     if cls.__module__ != service:
                         services.append(service)
 
+    # sys.module は、Python が開始されてからインポートされた全てのモジュールを辞書である。
+    # ： キーはモジュール名、値はモジュール・オブジェクトである。
+    # コンテキスト実装クラスのモジュールオブジェクトを取得。
     m = sys.modules[cls.__module__]
+    # mから_REQUIRED_APPの属性の値を返す（なければ[]）
     services.extend(getattr(m, '_REQUIRED_APP', []))
+    # set: 順序の保証がないオブジェクト、それをリスト化している
     services = list(set(services))
     return services
 
