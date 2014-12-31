@@ -382,6 +382,7 @@ class AppManager(object):
                      in itertools.chain.from_iterable(app.split(',')
                                                       for app in app_lists)]
         while len(app_lists) > 0:
+            # リストが空になるまで、app_listsから処理対象のアプリケーションをpopする
             app_cls_name = app_lists.pop(0)
 
             context_modules = map(lambda x: x.__module__,
