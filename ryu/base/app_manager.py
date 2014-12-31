@@ -104,8 +104,9 @@ class RyuApp(object):
     """
     # キー：コンテキスト名
     # 値：コンテキストを実装しているクラス名
+    # クラスはapp_mgrによってインスタンス化されて、同一のキーを持つアプリケーション間で共有される 
+    # 例：'network': network.Network
     
-    #
     _CONTEXTS = {}
     """
     A dictionary to specify contexts which this Ryu application wants to use.
