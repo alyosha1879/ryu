@@ -73,10 +73,13 @@ def main(args=None, prog=None):
     # keep old behaivor, run ofp if no application is specified.
     if not app_lists:
         app_lists = ['ryu.controller.ofp_handler']
-
+　　# app_mgrの作成（シングルトン）
     app_mgr = AppManager.get_instance()
+    # アプリケーションモジュールの動的importおよびコンテキスト実装クラスを取得
     app_mgr.load_apps(app_lists)
+    # アプリケーションのコンテキストを実装しているクラスの作成
     contexts = app_mgr.create_contexts()
+    # 
     services = []
     services.extend(app_mgr.instantiate_apps(**contexts))
 
