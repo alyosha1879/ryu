@@ -42,7 +42,7 @@ from ryu.ofproto import ofproto_protocol
 LOG = logging.getLogger('ryu.base.app_manager')
 
 # 辞書型
-# キー：クラス名、値：アプリケーションのファイル名
+# キー：クラス名、値：アプリケーションのインスタンス
 SERVICE_BRICKS = {}
 
 
@@ -57,7 +57,7 @@ def _lookup_service_brick_by_ev_cls(ev_cls):
 def _lookup_service_brick_by_mod_name(mod_name):
     return lookup_service_brick(mod_name.split('.')[-1])
 
-
+# SERVICE_BRICKSにアプリケーションのインスタンスを重複のないように登録する
 def register_app(app):
     assert isinstance(app, RyuApp)
     assert app.name not in SERVICE_BRICKS
@@ -364,8 +364,11 @@ class AppManager(object):
         
         # キー：アプリケーションのファイル名、値：アプリケーションのクラス
         self.applications_cls = {}
+        # キー：アプリケーションの名前、値；アプリケーションのインスタンス
         self.applications = {}
+        # 各アプリケーションの_CONTEXTSにおけるキーとコンテキストの実装「クラス」の辞書
         self.contexts_cls = {}
+        # 各アプリケーションの_CONTEXTSにおけるキーと実装クラスの「インスタンス」の辞書
         self.contexts = {}
 
     def load_app(self, name):
@@ -413,8 +416,9 @@ class AppManager(object):
             # クラスの_CONTEXTSに登録されているキーと値を取得
             for key, context_cls in cls.context_iteritems():
                 
-                # 辞書型self.contexts_clsにkeyがあればその値を、なければkeyとcontext_clsを挿入しcontext_clsを返す
+                # 辞書型self.contexts_clsにkeyがあればその値を返す、なければkeyとcontext_clsを挿入しcontext_clsを返す
                 v = self.contexts_cls.setdefault(key, context_cls)
+                # アプリケーション間でコンテキストの実装クラスが同じであることを保証
                 assert v == context_cls
                 # コンテキストを実装しているクラスのモジュール名をリストに追加
                 context_modules.append(context_cls.__module__)
@@ -444,6 +448,7 @@ class AppManager(object):
             else:
                 context = cls()
             LOG.info('creating context %s', key)
+            # 重複がないことの確認
             assert key not in self.contexts
             self.contexts[key] = context
         return self.contexts
@@ -492,6 +497,7 @@ class AppManager(object):
 
         if app_name is not None:
             assert app_name not in self.applications
+        # アプリケーションのインスタンス化
         app = cls(*args, **kwargs)
         register_app(app)
         assert app.name not in self.applications
