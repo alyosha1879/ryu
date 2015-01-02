@@ -79,8 +79,8 @@ def main(args=None, prog=None):
     app_mgr.load_apps(app_lists)
     # アプリケーションのコンテキストを実装しているクラスの作成
     contexts = app_mgr.create_contexts()
-    # 
     services = []
+    # アプリケーションのインスタンスをリストに追加
     services.extend(app_mgr.instantiate_apps(**contexts))
 
     webapp = wsgi.start_service(app_mgr)
