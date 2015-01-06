@@ -89,6 +89,7 @@ def main(args=None, prog=None):
         services.append(thr)
 
     try:
+        全てのスレッドに対してwaitを呼び出す
         hub.joinall(services)
     finally:
         app_mgr.close()
