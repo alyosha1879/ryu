@@ -81,6 +81,7 @@ if HUB_TYPE == 'eventlet':
     def kill(thread):
         thread.kill()
 
+　　# 生成したスレッドを同期させる。
     def joinall(threads):
         for t in threads:
             # this try-except is necessary when killing an inactive
