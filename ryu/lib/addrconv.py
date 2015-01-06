@@ -14,6 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# 実質的にはnetaddrのラッパークラス
+# netaddrのメソッドを利用するのに必要なオブジェクトを生成して、そのオブジェクト経由でメソッドを呼び出す。
+
 import netaddr
 
 
