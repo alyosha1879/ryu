@@ -10,7 +10,7 @@ def ipv4_to_bin(ip):
         '\xc0\xa8\x01\x01'
         やや特殊な呼び出し方をしている。
         addrconv.ipv4 = AddressConverter(netaddr.IPAddress, netaddr.strategy.ipv4, version=4) 
-        つまりインスタンス
+        つまり必要な引数はすでにデフォルトでセットされたインスタンス
         この生成されたインスタンスを経由して、クラスのメソッドにアクセスしている。
     '''
     return addrconv.ipv4.text_to_bin(ip)
