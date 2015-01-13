@@ -287,6 +287,7 @@ class RyuApp(object):
                 handler(ev)
 
     def _send_event(self, ev, state):
+        # ここでキューにイベントをプッシュしている
         self.events.put((ev, state))
 
     def send_event(self, name, ev, state=None):
@@ -303,7 +304,9 @@ class RyuApp(object):
         else:
             LOG.debug("EVENT LOST %s->%s %s" %
                       (self.name, name, ev.__class__.__name__))
-
+　　
+　　# Datapathクラスにおいて呼び出されている
+　　# self.ofp_brick.send_event_to_observers(ev, self.state)
     def send_event_to_observers(self, ev, state=None):
         """
         Send the specified event to all observers of this RyuApp.
