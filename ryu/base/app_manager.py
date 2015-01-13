@@ -177,6 +177,7 @@ class RyuApp(object):
         """
         Hook that is called after startup initialization is done.
         """
+        # AppManager経由でよびだされ、スレッドを生成する。
         self.threads.append(hub.spawn(self._event_loop))
 
     def stop(self):
