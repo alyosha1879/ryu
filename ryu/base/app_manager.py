@@ -45,7 +45,8 @@ LOG = logging.getLogger('ryu.base.app_manager')
 # キー：クラス名、値：アプリケーションのインスタンス
 SERVICE_BRICKS = {}
 
-
+# Datapathのinitメソッドにおいて呼び出される
+# ryu.base.app_manager.lookup_service_brick('ofp_event')
 def lookup_service_brick(name):
     return SERVICE_BRICKS.get(name)
 
