@@ -187,6 +187,7 @@ class RyuApp(object):
         self._send_event(self._event_stop, None)
         hub.joinall(self.threads)
 
+    # handler.py中のregister_instanceメソッドで呼び出されている
     def register_handler(self, ev_cls, handler):
         assert callable(handler)
         self.event_handlers.setdefault(ev_cls, [])
