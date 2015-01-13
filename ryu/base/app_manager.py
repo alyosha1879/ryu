@@ -519,6 +519,7 @@ class AppManager(object):
 
         threads = []
         for app in self.applications.values():
+            # RyuAppのメソッドstart()中でself.threads.append(hub.spawn(self._event_loop))を呼び出してスレッドを作成している。
             t = app.start()
             if t is not None:
                 threads.append(t)
