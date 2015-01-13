@@ -271,9 +271,10 @@ class RyuApp(object):
         self.send_event(req.dst, req)
         # going to sleep for the reply
         return req.reply_q.get()
-
+        
+    # startメソッド実行時に呼び出される
     def _event_loop(self):
-        # start()メソッド実行時に呼び出される。
+        # アプリごとにスレッド上においてループを回し続ける
         while self.is_active or not self.events.empty():
             # イベントという名のキューから取り出し
             ev, state = self.events.get()
@@ -281,6 +282,7 @@ class RyuApp(object):
                 continue
             handlers = self.get_handlers(ev, state)
             for handler in handlers:
+                # ここでパケットイン等のイベント処理を実行している！？
                 handler(ev)
 
     def _send_event(self, ev, state):
