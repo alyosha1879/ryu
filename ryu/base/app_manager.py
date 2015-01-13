@@ -160,6 +160,7 @@ class RyuApp(object):
         self.event_handlers = {}        # ev_cls -> handlers:list
         self.observers = {}     # ev_cls -> observer-name -> states:set
         self.threads = []
+        # イベントという名のキュー
         self.events = hub.Queue(128)
         if hasattr(self.__class__, 'LOGGER_NAME'):
             self.logger = logging.getLogger(self.__class__.LOGGER_NAME)
@@ -177,7 +178,7 @@ class RyuApp(object):
         """
         Hook that is called after startup initialization is done.
         """
-        # AppManager経由でよびだされ、スレッドを生成する。
+        # AppManager経由でよびだされスレッドを生成する。
         self.threads.append(hub.spawn(self._event_loop))
 
     def stop(self):
@@ -272,7 +273,9 @@ class RyuApp(object):
         return req.reply_q.get()
 
     def _event_loop(self):
+        # start()メソッド実行時に呼び出される。
         while self.is_active or not self.events.empty():
+            # イベントという名のキューから取り出し
             ev, state = self.events.get()
             if ev == self._event_stop:
                 continue
