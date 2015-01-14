@@ -15,6 +15,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# ryu-manager実行時に呼び出されるRyuの処理のmain関数
+# ryu-manager実行時に呼び出されるRyuのエントリポイント
 from ryu.cmd.manager import main
 main()
