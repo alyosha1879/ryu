@@ -220,6 +220,7 @@ class Datapath(ofproto_protocol.ProtocolDesc):
         send_thr = hub.spawn(self._send_loop)
 
         # send hello message immediately
+        # helloメッセージのやりとりはアプリケーションによらず実施される。
         hello = self.ofproto_parser.OFPHello(self)
         self.send_msg(hello)
 
