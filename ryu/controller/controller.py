@@ -65,6 +65,7 @@ class OpenFlowController(object):
         super(OpenFlowController, self).__init__()
 
     # entry point
+    # どこかでOpenFlowController()のように呼び出しているハズ！
     def __call__(self):
         # LOG.debug('call')
         self.server_loop()
