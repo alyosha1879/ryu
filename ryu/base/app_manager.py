@@ -448,6 +448,7 @@ class AppManager(object):
                     
             # pythonのリスト閉包中の倒置if文
             if services:
+                # servicesがある場合リストに追加され、ループが延長する。
                 app_lists.extend([s for s in set(services)
                                   if s not in app_lists])
 
