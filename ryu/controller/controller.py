@@ -65,7 +65,8 @@ class OpenFlowController(object):
         super(OpenFlowController, self).__init__()
 
     # entry point
-    # どこかでOpenFlowController()のように呼び出しているハズ！
+    # /ryu/controller/ofp_handler.pyから呼び出される
+    # hub.spawn(OpenFlowController())
     def __call__(self):
         # LOG.debug('call')
         self.server_loop()
