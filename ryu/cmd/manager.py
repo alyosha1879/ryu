@@ -80,6 +80,9 @@ def main(args=None, prog=None):
     app_mgr.load_apps(app_lists)
     # アプリケーションのコンテキストを実装しているクラスの作成
     contexts = app_mgr.create_contexts()
+    
+    # 各アプリケーションがListenするイベントを実装しているクラスのインスタンス
+    # e.g ryu/controller/ofp_event.py => ryu.controller.ofp_handler
     services = []
     # アプリケーションのインスタンスをリストに追加
     services.extend(app_mgr.instantiate_apps(**contexts))
