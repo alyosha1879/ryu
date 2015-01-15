@@ -161,6 +161,9 @@ def register_service(service):
     This mechanism is used to e.g. automatically start ofp_handler if
     there are applications consuming OFP events.
     """
+    # 呼び出し元スタックのフレームレコードのリストを返します。
+    # 最初の要素は呼び出し元のフレームレコードで、末尾の要素はスタックにある最も外側のフレームのフレームレコードとなります。
     frm = inspect.stack()[1]
     m = inspect.getmodule(frm[0])
+    # 呼び出し元モジュールに_SERVICE_NAMEを登録している。
     m._SERVICE_NAME = service
