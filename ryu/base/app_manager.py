@@ -180,6 +180,7 @@ class RyuApp(object):
         Hook that is called after startup initialization is done.
         """
         # AppManager経由でよびだされスレッドを生成する。
+        # いずれのアプリも内部的にはループする関数をスレッド化していることに注意。
         self.threads.append(hub.spawn(self._event_loop))
 
     def stop(self):
