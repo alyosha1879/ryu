@@ -95,6 +95,7 @@ def set_ev_handler(ev_cls, dispatchers=None):
             handler.callers = {}
         # 引数としてのev_clsをリスト化してforループで回している
         for e in _listify(ev_cls):
+            # callersはキーにev_cls、値にdispatchersをセットする。
             handler.callers[e] = _Caller(_listify(dispatchers), None)
         return handler
     return _set_ev_cls_dec
@@ -124,9 +125,11 @@ def get_dependent_services(cls):
     services = []
     # コンテキスト実装クラスからメソッドを（名前、値）で取り出し。
     for _k, m in inspect.getmembers(cls, inspect.ismethod):
-        # もしメソッドにcallersという属性がある場合
+        # もしメソッドにcallersという属性がある場合 = @set_ev_handlerでデコレートされている場合
         if _has_caller(m):
             for ev_cls, c in m.callers.iteritems():
+                #ロード済みモジュールのモジュール名とモジュールオブジェクトの辞書sys.modulesの中からイベントクラスev_clsのモジュール名を取得。
+                #そのモジュール名に対して、下のregister_serviceメソッドで定義された_SERVICE_NAMEを取り出す
                 service = getattr(sys.modules[ev_cls.__module__],
                                   '_SERVICE_NAME', None)
                 if service:
