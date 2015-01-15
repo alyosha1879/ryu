@@ -71,6 +71,7 @@ def main(args=None, prog=None):
 
     app_lists = CONF.app_lists + CONF.app
     # keep old behaivor, run ofp if no application is specified.
+    # ryu起動時にアプリを指定してもしなくても、ofp_handlerは立ち上がる？なぜ？？
     if not app_lists:
         app_lists = ['ryu.controller.ofp_handler']
 　　# app_mgrの作成（シングルトン）
