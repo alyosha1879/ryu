@@ -456,6 +456,9 @@ class AppManager(object):
 
     def create_contexts(self):
         for key, cls in self.contexts_cls.items():
+            
+            # RyuAppのサブクラスならば、インスタンスの作成およびregister_appでSERVICE_BRICKに登録を実施。
+            # sサブクラスでないならば、インスタンスを生成するのみ。
             if issubclass(cls, RyuApp):
                 # hack for dpset
                 context = self._instantiate(None, cls)
