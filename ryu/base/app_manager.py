@@ -107,6 +107,7 @@ class RyuApp(object):
     # 値：コンテキストを実装しているクラス名
     # クラスはapp_mgrによってインスタンス化されて、同一のキーを持つアプリケーション間で共有される 
     # 例：'network': network.Network
+    # コンテキストはRyuAppのサブクラスではないことに注意
     
     _CONTEXTS = {}
     """
