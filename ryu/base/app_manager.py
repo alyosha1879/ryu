@@ -364,8 +364,8 @@ class AppManager(object):
         finally:
             app_mgr.close()
 
-    # デザインパターンでいうところのシングルトン
-    # ryu/ryu/cmd/manager.pyで以下のようにしてapp_mgrの生成に利用されている
+    # デザインパターンでいうところのシングルトン、自身のインスタンスを一つだけ生成する。
+    # ryu/ryu/cmd/manager.pyで以下のようにしてapp_mgrの生成に利用されている。
     # app_mgr = AppManager.get_instance()
     @staticmethod
     def get_instance():
@@ -404,11 +404,15 @@ class AppManager(object):
         return None
 
     def load_apps(self, app_lists):
+        # 引数が','で区切られた場合のparse。
+        # 再度app_listsにリスト化しなおす。
         app_lists = [app for app
                      in itertools.chain.from_iterable(app.split(',')
                                                       for app in app_lists)]
+                                                      
+        # リストが空になるまで、app_listsから処理対象のアプリケーションをpopする。 
+        # アプリケーションが依存するモジュールがあれば、app_listsに追加されることに注意。
         while len(app_lists) > 0:
-            # リストが空になるまで、app_listsから処理対象のアプリケーションをpopする。
             app_cls_name = app_lists.pop(0)
 
             context_modules = map(lambda x: x.__module__,
