@@ -376,7 +376,7 @@ class AppManager(object):
     def __init__(self):
         
         # キー：ユーザが引数で指定するアプリケーションのモジュール名
-        # 値：モジュール中のスレッドで必要とするアプリケーションのクラス
+        # 値：モジュール中のスレッドで必要とするアプリケーションのRyuAppサブクラス
         self.applications_cls = {}
         # キー：アプリケーションの名前、値；アプリケーションのインスタンス
         self.applications = {}
@@ -396,7 +396,7 @@ class AppManager(object):
         
         # モジュールの中からクラスかつRyuAppのサブクラスかつクラス名とモジュル名と一致するメンバを返す。
         # アプリケーションは「変数・関数・クラス」を含むモジュールの形で指定される。
-        # 最終的にはアプリケーション単位でスレッドを生成するが、ここではモジュールからスレッドで必要なもののみを取得している。
+        # 最終的にはアプリケーション単位でスレッドを生成するが、ここではモジュールからスレッドで必要なRyuAppサブクラスを取得している。
         clses = inspect.getmembers(mod,
                                    lambda cls: (inspect.isclass(cls) and
                                                 issubclass(cls, RyuApp) and
@@ -436,24 +436,28 @@ class AppManager(object):
 
             services = []
             
-            # クラスの_CONTEXTSに登録されているキーと値を取得
+            # RyuAppサブクラスの_CONTEXTSに登録されているキーと値を取得。
             for key, context_cls in cls.context_iteritems():
                 
-                # 辞書型self.contexts_clsにkeyがあればその値を返す、なければkeyとcontext_clsを挿入しcontext_clsを返す
+                # 辞書型self.contexts_clsにキーがあればその値を返す、なければキーと値を挿入し値を返す。
                 v = self.contexts_cls.setdefault(key, context_cls)
-                # アプリケーション間でコンテキストの実装クラスが同じであることを保証
+                # RyuAppサブクラス間において、_CONTEXTSのキーと値のペアがずれていないことを確認。
                 assert v == context_cls
                 # コンテキストを実装しているクラスのモジュール名をリストに追加
                 context_modules.append(context_cls.__module__)
 
                 if issubclass(context_cls, RyuApp):
+                    # RyuAppのサブクラスは全てスレッドに引き渡す対象となることに注意。
+                    # RyuAppサブクラスに対するサービスを取得する。
                     # ryu/ryu/controller/handler.pyに定義されているget_dependent_services
+                    # ＠set_serviceのイベントのサービスだっけ?
+                    
                     services.extend(get_dependent_services(context_cls))
 
             # we can't load an app that will be initiataed for
             # contexts.
             
-        
+            # 上と同じくRyuAppサブクラスに対するサービスを取得する。(例simple_switch -> ofc_handler)
             for i in get_dependent_services(cls):
                 if i not in context_modules:
                     services.append(i)
