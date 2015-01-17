@@ -379,21 +379,23 @@ class AppManager(object):
         self.applications_cls = {}
         # キー：アプリケーションの名前、値；アプリケーションのインスタンス
         self.applications = {}
-        # 各アプリケーションの_CONTEXTSにおけるキーとコンテキストの実装「クラス」の辞書
+        # 引数に指定されたアプリケーションの_CONTEXTSのキーおよび値
+        # コンテキスト名とコンテキストの実装モジュール
         self.contexts_cls = {}
         # 各アプリケーションの_CONTEXTSにおけるキーと実装クラスの「インスタンス」の辞書
         self.contexts = {}
 
     def load_app(self, name):
-        # 組み込み関数の__import__を用いて、動的にモジュールをインポート。
-        # nameはRyuアプリケーションの名前。
+        # 組み込み関数の__import__を用いて動的にモジュールをインポート。以降の処理でinspect関数利用の前処理。
         mod = utils.import_module(name)
         
-        # inspect.getmembers(object[, predicate]) :オブジェクトの全メンバーを、 
+        # inspect.getmembers(object[, predicate]) :「オブジェクトの全メンバーを、 
         # (名前, 値) の組み合わせのリストで返します。リストはメンバー名でソートされています。 
-        # predicate が指定されている場合、 predicate の戻り値が真となる値のみを返します。
+        # predicate が指定されている場合、 predicate の戻り値が真となる値のみを返します。」
         
-        # アプリケーション名（Pythonのファイル名）から、クラス/RyuAppのサブクラス/ファイル名と一致するクラスを返す
+        # モジュールの中からクラスかつRyuAppのサブクラスかつクラス名とモジュル名と一致するメンバを返す。
+        # アプリケーションは「変数・関数・クラス」を含むモジュールの形で指定される。
+        # 最終的にはアプリケーション単位でスレッドを生成するが、ここではモジュールからスレッドで必要なもののみを取得している。
         clses = inspect.getmembers(mod,
                                    lambda cls: (inspect.isclass(cls) and
                                                 issubclass(cls, RyuApp) and
@@ -410,13 +412,15 @@ class AppManager(object):
                      in itertools.chain.from_iterable(app.split(',')
                                                       for app in app_lists)]
                                                       
-        # リストが空になるまで、app_listsから処理対象のアプリケーションをpopする。 
+        # リストが空になるまで、app_listsから処理対象のアプリケーションをpopしてループする。 
         # アプリケーションが依存するモジュールがあれば、app_listsに追加されることに注意。
         while len(app_lists) > 0:
             app_cls_name = app_lists.pop(0)
 
             context_modules = map(lambda x: x.__module__,
                                   self.contexts_cls.values())
+            # アプリケーションがコンテキストモジュールに含まれていた場合は、以降の処理を飛ばしてからループを再開する。
+            # 最初のアプリケーションのコンテキストモジュールが、次のアプリケーションであった場合などが該当する。
             if app_cls_name in context_modules:
                 continue
 
