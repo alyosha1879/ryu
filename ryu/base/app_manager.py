@@ -375,7 +375,8 @@ class AppManager(object):
 
     def __init__(self):
         
-        # キー：アプリケーションのファイル名、値：アプリケーションのクラス
+        # キー：ユーザが引数で指定するアプリケーションのモジュール名
+        # 値：モジュール中のスレッドで必要とするアプリケーションのクラス
         self.applications_cls = {}
         # キー：アプリケーションの名前、値；アプリケーションのインスタンス
         self.applications = {}
@@ -430,6 +431,7 @@ class AppManager(object):
             if cls is None:
                 continue
 
+　　　　　　# applications_clsに登録する。
             self.applications_cls[app_cls_name] = cls
 
             services = []
