@@ -104,7 +104,7 @@ class RyuApp(object):
     It's discouraged for subclasses to override this.
     """
     # キー：コンテキスト名
-    # 値：コンテキストを実装しているクラス名
+    # 値：コンテキストを実装しているクラス名(≠モジュール名である)
     # クラスはapp_mgrによってインスタンス化されて、同一のキーを持つアプリケーション間で共有される 
     # 例：'network': network.Network
     # コンテキストクラスはRyuAppのサブクラスとは「限らない」ことに注意
@@ -405,7 +405,8 @@ class AppManager(object):
         if clses:
             return clses[0][1]
         return None
-
+　　
+　　# applications_clsに必要となるアプリケーションのモジュール名、およびRyuAppのサブクラスをすべて登録する
     def load_apps(self, app_lists):
         # 引数が','で区切られた場合のparse。
         # 再度app_listsにリスト化しなおす。
@@ -450,8 +451,7 @@ class AppManager(object):
                     # RyuAppのサブクラスは全てスレッドに引き渡す対象となることに注意。
                     # RyuAppサブクラスに対するサービスを取得する。
                     # ryu/ryu/controller/handler.pyに定義されているget_dependent_services
-                    # ＠set_serviceのイベントのサービスだっけ?
-                    
+                    # 例として{'dpset': dpset.DPSet}の場合は、最終的にはryu.controller.ofp_handlerがサービスに追加される。
                     services.extend(get_dependent_services(context_cls))
 
             # we can't load an app that will be initiataed for
