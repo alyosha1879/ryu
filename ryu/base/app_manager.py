@@ -381,7 +381,7 @@ class AppManager(object):
         # キー：アプリケーションの名前、値；アプリケーションのインスタンス
         self.applications = {}
         # 引数に指定されたアプリケーションの_CONTEXTSのキーおよび値
-        # コンテキスト名とコンテキストの実装モジュール
+        # コンテキスト名とコンテキストの実装クラス（≠実装モジュールではないことに注意）
         self.contexts_cls = {}
         # 各アプリケーションの_CONTEXTSにおけるキーと実装クラスの「インスタンス」の辞書
         self.contexts = {}
@@ -406,7 +406,7 @@ class AppManager(object):
             return clses[0][1]
         return None
 　　
-　　# applications_clsに必要となるアプリケーションのモジュール名、およびRyuAppのサブクラスをすべて登録する
+　　# applications_clsに{キー:アプリケーションのモジュール名、値:RyuAppのサブクラス}をすべて登録する
     def load_apps(self, app_lists):
         # 引数が','で区切られた場合のparse。
         # 再度app_listsにリスト化しなおす。
@@ -472,7 +472,7 @@ class AppManager(object):
         for key, cls in self.contexts_cls.items():
             
             # RyuAppのサブクラスならば、インスタンスの作成およびregister_appでSERVICE_BRICKに登録を実施。
-            # sサブクラスでないならば、インスタンスを生成するのみ。
+            # サブクラスでないならば、インスタンスを生成するのみ。
             if issubclass(cls, RyuApp):
                 # hack for dpset
                 context = self._instantiate(None, cls)
