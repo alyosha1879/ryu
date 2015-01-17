@@ -69,11 +69,14 @@ def main(args=None, prog=None):
         with open(CONF.pid_file, 'w') as pid_file:
             pid_file.write(str(os.getpid()))
 
+    # ryu-managerの引数はapp_listsに含まれる。
     app_lists = CONF.app_lists + CONF.app
+    
     # keep old behaivor, run ofp if no application is specified.
-    # ryu起動時にアプリを指定してもしなくても、ofp_handlerは立ち上がる？なぜ？？
+    # 引数が指定されていな場合は、ofp_handlerが引数に追加される。
     if not app_lists:
         app_lists = ['ryu.controller.ofp_handler']
+        
 　　# app_mgrの作成（シングルトン）
     app_mgr = AppManager.get_instance()
     # アプリケーションモジュールの動的importおよびコンテキスト実装クラスを取得
