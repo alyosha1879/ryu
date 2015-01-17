@@ -79,12 +79,13 @@ def main(args=None, prog=None):
         
 　　# app_mgrの作成（シングルトン）
     app_mgr = AppManager.get_instance()
-    # アプリケーションモジュールの動的importおよびコンテキスト実装クラスを取得
+    # applications_clsに{キー:アプリケーションのモジュール名、値:RyuAppのサブクラス}をすべて登録する。
+    # app_listsに含まれないが動作に必要となる、RyuAppで定義されたコンテキストも含まれていることに注意。
     app_mgr.load_apps(app_lists)
-    # アプリケーションのコンテキストを実装しているクラスの作成
+    # アプリケーションのコンテキストを実装しているクラスのインスタンス化。
+    # RyuAppのサブクラスならSERVICE_BRICKに登録する。
     contexts = app_mgr.create_contexts()
-    
-    # 各アプリケーションがListenするイベントを実装しているクラスのインスタンス
+    # services: 各アプリケーションがListenするイベントを実装しているクラスのインスタンスのリスト
     # e.g ryu/controller/ofp_event.py => ryu.controller.ofp_handler
     services = []
     # アプリケーションのインスタンスをリストに追加
