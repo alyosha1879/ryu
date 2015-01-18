@@ -211,7 +211,10 @@ class RyuApp(object):
         # eg. self.observers = {ofp_event.EventOFPPacketIn : {}}
         #     ev_cls_observers = {}
         ev_cls_observers = self.observers.setdefault(ev_cls, {})
-        # update:辞書オブジェクトを連結する。
+        # set():順序を保証しないコレクション型オブジェクト。
+        # update:set型オブジェクトに要素を追加する。
+        # ev_cls_observersを介してself.observersの値に代入する。
+        # self.observers = {ofp_event.EventOFPPacketIn : {SimpleSwitch13, MAIN_DISPATCHER}}
         ev_cls_observers.setdefault(name, set()).update(states)
 
     def unregister_observer(self, ev_cls, name):
@@ -501,15 +504,20 @@ class AppManager(object):
                 if not hasattr(m, 'callers'):
                     continue
                 for ev_cls, c in m.callers.iteritems():
+                    # ev_sourceはev_clsのモジュール。
                     # ev_sourceがなければループに戻る 。
                     # => set_ev_handlerでデコレートされていればev_sourceはない。
                     #    set_ev_clsでデコレートされていればev_sourceはある。
                     if not c.ev_source:
                         continue
 
-　　　　　　　　　　# SERVICE_BRICK[ev_cls]に該当する。
+　　　　　　　　　　# SERVICE_BRICK[ev_source]に該当する。brickはRyuAppのサブクラスのインスタンス。
+　　　　　　　　　　# イベントソースとイベントクラスの関係がよくわからない...
                     brick = _lookup_service_brick_by_mod_name(c.ev_source)
                     if brick:
+                        # 以下のようにself.observersにイベントクラス・アプリケーション名・ディスパッチャーが登録される。
+                        # eg. ofp_event中のself.observersに対して
+                        # self.observers = {ofp_event.EventOFPPacketIn : {SimpleSwitch13, MAIN_DISPATCHER}}
                         brick.register_observer(ev_cls, i.name,
                                                 c.dispatchers)
 
