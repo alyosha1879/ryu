@@ -54,16 +54,14 @@ class _Caller(object):
                           ev_cls.__module__ for set_ev_cls.
                           None for set_ev_handler.
         """
+        # イベントソースはイベントクラスのモジュール
         self.dispatchers = dispatchers
         self.ev_source = ev_source
 
 
 # should be named something like 'observe_event'
-
-# Ryuアプリケーションに特定のイベント(ev_cls)をlistenさせるデコレータ 
-# イベント発生時にデコレータ対象のhandlerが呼び出される
-
-# 引数付きのデコレータ関数
+# イベントクラス・ディパッッチャー・イベントソースの設定を行う。
+# 引数付きのデコレータ
 # 使用例
 #     @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
 #     def _packet_in_handler(self, ev):
@@ -76,17 +74,8 @@ def set_ev_cls(ev_cls, dispatchers=None):
         return handler
     return _set_ev_cls_dec
 
-# メソッドをイベント制御用のハンドラー化させるデコレータ
-
-# 使用例
-# SampleRequest発生時にsample_request_handlerが呼び出される
-# デコレート対象のメソッドに辞書型アトリビュートを追加する（既にあれば何もしない）
-#
-# class SampleRequest(EventRequestBase):
-#
-# @set_ev_cls(SampleRequest)
-# def sample_request_handler(self, request):
-
+# 引数付きのデコレータ。
+# イベントクラスおよびディスパッチャーの設定は行うが、イベントソースは設定しない。
 def set_ev_handler(ev_cls, dispatchers=None):
     def _set_ev_cls_dec(handler):
         if 'callers' not in dir(handler):
@@ -96,6 +85,7 @@ def set_ev_handler(ev_cls, dispatchers=None):
         # 引数としてのev_clsをリスト化してforループで回している
         for e in _listify(ev_cls):
             # callersはキーにev_cls、値にdispatchersをセットする。
+            # ここではイベントソースの設定はしない。
             handler.callers[e] = _Caller(_listify(dispatchers), None)
         return handler
     return _set_ev_cls_dec
