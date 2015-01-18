@@ -85,10 +85,11 @@ def main(args=None, prog=None):
     # アプリケーションのコンテキストを実装しているクラスのインスタンス化。
     # RyuAppのサブクラスならSERVICE_BRICKに登録する。
     contexts = app_mgr.create_contexts()
-    # services: 各アプリケーションがListenするイベントを実装しているクラスのインスタンスのリスト
+    # services: 各アプリケーションがListenするイベントを実装しているクラスのインスタンスのリスト。
     # e.g ryu/controller/ofp_event.py => ryu.controller.ofp_handler
     services = []
-    # アプリケーションのインスタンスをリストに追加
+    # アプリケーションのインスタンスを生成。
+    # コンテキストは生成時の引数としてしようする。
     services.extend(app_mgr.instantiate_apps(**contexts))
 
     webapp = wsgi.start_service(app_mgr)
