@@ -202,9 +202,16 @@ class RyuApp(object):
         if not self.event_handlers[ev_cls]:
             del self.event_handlers[ev_cls]
 
+　　# 引数:イベントクラス、インスタンス名、ディスパッチャー
+　　# eg. ofp_event.EventOFPPacketIn, SimpleSwitch13, MAIN_DISPATCHER
     def register_observer(self, ev_cls, name, states=None):
         states = states or set()
+        # setdefault:既存の値を上書きしないようにして辞書に登録する。
+        # a.setdefault(k[, x]) => もし k in aならa[k]を返す、 そうでなければa[k]=xとしてxを返す。
+        # eg. self.observers = {ofp_event.EventOFPPacketIn : {}}
+        #     ev_cls_observers = {}
         ev_cls_observers = self.observers.setdefault(ev_cls, {})
+        # update:辞書オブジェクトを連結する。
         ev_cls_observers.setdefault(name, set()).update(states)
 
     def unregister_observer(self, ev_cls, name):
