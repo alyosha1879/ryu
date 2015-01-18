@@ -89,7 +89,7 @@ def main(args=None, prog=None):
     # e.g ryu/controller/ofp_event.py => ryu.controller.ofp_handler
     services = []
     # アプリケーションのインスタンスを生成。
-    # コンテキストは生成時の引数としてしようする。
+    # コンテキストは生成時の引数として使用する。
     services.extend(app_mgr.instantiate_apps(**contexts))
 
     webapp = wsgi.start_service(app_mgr)
