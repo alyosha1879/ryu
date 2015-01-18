@@ -42,7 +42,7 @@ from ryu.ofproto import ofproto_protocol
 LOG = logging.getLogger('ryu.base.app_manager')
 
 # 辞書型
-# キー：クラス名、値：アプリケーションのインスタンス
+# RyuAppのサブクラスであるアプリケーションおよびコンテキストの名前・インスタンスが登録される。
 SERVICE_BRICKS = {}
 
 # Datapathのinitメソッドにおいて呼び出される
@@ -56,6 +56,7 @@ def _lookup_service_brick_by_ev_cls(ev_cls):
 
 
 def _lookup_service_brick_by_mod_name(mod_name):
+    # モジュール名のpyを削除
     return lookup_service_brick(mod_name.split('.')[-1])
 
 # SERVICE_BRICKSにアプリケーションのインスタンスを重複のないように登録する
@@ -378,7 +379,7 @@ class AppManager(object):
         # キー：ユーザが引数で指定するアプリケーションのモジュール名
         # 値：モジュール中のスレッドで必要とするアプリケーションのRyuAppサブクラス
         self.applications_cls = {}
-        # キー：アプリケーションの名前、値；アプリケーションのインスタンス
+        # キー：アプリケーションのクラス名、値；アプリケーションのインスタンス
         self.applications = {}
         # 引数に指定されたアプリケーションの_CONTEXTSのキーおよび値
         # コンテキスト名とコンテキストの実装クラス（≠実装モジュールではないことに注意）
@@ -484,15 +485,22 @@ class AppManager(object):
             self.contexts[key] = context
         return self.contexts
 
+　　# アプリケーションのインスタンス生成時に呼び出される。
     def _update_bricks(self):
+        # アプリケーションおよびコンテキストのインスタンスを取得。
         for i in SERVICE_BRICKS.values():
+            # メソッドを取得。
             for _k, m in inspect.getmembers(i, inspect.ismethod):
                 if not hasattr(m, 'callers'):
                     continue
                 for ev_cls, c in m.callers.iteritems():
+                    # ev_sourceがなければループに戻る 。
+                    # => set_ev_handlerでデコレートされていればev_sourceはない。
+                    #    set_ev_clsでデコレートされていればev_sourceはある。
                     if not c.ev_source:
                         continue
 
+　　　　　　　　　　# SERVICE_BRICK[ev_cls]に該当する。
                     brick = _lookup_service_brick_by_mod_name(c.ev_source)
                     if brick:
                         brick.register_observer(ev_cls, i.name,
@@ -530,12 +538,14 @@ class AppManager(object):
             assert app_name not in self.applications
         # アプリケーションのインスタンス化
         app = cls(*args, **kwargs)
+        # SERVICE_BRICKSにアプリケーションのインスタンスを重複のないように登録する
         register_app(app)
         assert app.name not in self.applications
         self.applications[app.name] = app
         return app
 
     def instantiate(self, cls, *args, **kwargs):
+        # _CONTEXTSを引数としてアプリケーションのインスタンスを生成する。
         app = self._instantiate(None, cls, *args, **kwargs)
         self._update_bricks()
         self._report_brick(app.name, app)
