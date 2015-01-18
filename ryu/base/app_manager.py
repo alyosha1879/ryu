@@ -512,7 +512,7 @@ class AppManager(object):
                         continue
 
 　　　　　　　　　　# SERVICE_BRICK[ev_source]に該当する。brickはRyuAppのサブクラスのインスタンス。
-　　　　　　　　　　# イベントソースとイベントクラスの関係がよくわからない...
+　　　　　　　　　　# イベントモジュールは、イベントクラスを定義したモジュールのこと。
                     brick = _lookup_service_brick_by_mod_name(c.ev_source)
                     if brick:
                         # 以下のようにself.observersにイベントクラス・アプリケーション名・ディスパッチャーが登録される。
