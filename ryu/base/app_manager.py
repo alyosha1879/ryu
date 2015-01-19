@@ -498,26 +498,32 @@ class AppManager(object):
 　　# アプリケーションのインスタンス生成時に呼び出される。
     def _update_bricks(self):
         # アプリケーションおよびコンテキストのインスタンスを取得。
+        # eg. simple_switch_13.pyの場合
+        # i...<simple_switch_13.SimpleSwitch13 object at 0x1756b10>
         for i in SERVICE_BRICKS.values():
             # メソッドを取得。
             for _k, m in inspect.getmembers(i, inspect.ismethod):
                 if not hasattr(m, 'callers'):
                     continue
+                # _k..._packet_in_handler, m...<bound method SimpleSwitch13._packet_in_handler of <simple_switch_13.SimpleSwitch13 object at 0x1756b10>>
                 for ev_cls, c in m.callers.iteritems():
                     # ev_sourceはev_clsのモジュール。
                     # ev_sourceがなければループに戻る 。
                     # => set_ev_handlerでデコレートされていればev_sourceはない。
                     #    set_ev_clsでデコレートされていればev_sourceはある。
+                    # c.ev_source...ofp_event
                     if not c.ev_source:
                         continue
 
 　　　　　　　　　　# SERVICE_BRICK[ev_source]に該当する。brickはRyuAppのサブクラスのインスタンス。
 　　　　　　　　　　# イベントモジュールは、イベントクラスを定義したモジュールのこと。
+　　　　　　　　　　# brick...<ryu.controller.ofp_handler.OFPHandler object at 0x1756d90>
                     brick = _lookup_service_brick_by_mod_name(c.ev_source)
                     if brick:
                         # 以下のようにself.observersにイベントクラス・アプリケーション名・ディスパッチャーが登録される。
                         # eg. ofp_event中のself.observersに対して
                         # self.observers = {ofp_event.EventOFPPacketIn : {SimpleSwitch13, MAIN_DISPATCHER}}
+                        # m.ev_cls...<class 'ryu.controller.ofp_event.EventOFPPacketIn'>, i.name...SimpleSwitch13, m.dispatchers...['main']
                         brick.register_observer(ev_cls, i.name,
                                                 c.dispatchers)
 
