@@ -110,8 +110,7 @@ def register_instance(i):
             for ev_cls, c in m.callers.iteritems():
                 i.register_handler(ev_cls, m)
 
-# app_mgrにて、RyuAppのサブクラスであるclsおよびcontext_clsを引数として呼び出される。
-# cls:アプリケーションモジュール中のRyuAppのサブクラス。
+# app_mgrにて、アプリケーション中で指定されたコンテキスト実装クラスcontext_clsがRyuAppのサブクラスの場合呼び出される。
 # context_cls:cls中の_CONTEXTSで定義された、コンテキストの実装クラス。
 # 両クラスの@set_ev_handlerがlistenしているイベントを実装しているモジュールを取り出し、そのモジュールの_SERVICE_NAMEを取り出す。
 # eg. @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER) => ofp_event => ryu.controller.ofp_handler
@@ -119,7 +118,7 @@ def get_dependent_services(cls):
     services = []
     # コンテキスト実装クラスからメソッドを（名前、値）で取り出し。
     for _k, m in inspect.getmembers(cls, inspect.ismethod):
-        # もしメソッドにcallersという属性がある場合 = @set_ev_handlerでデコレートされている場合
+        # もしメソッドにcallersという属性がある場合、つまり@set_ev_handlerでデコレートされていた場合
         if _has_caller(m):
             # callerのイベント名およびディスパッチャーの両方を取り出し
             for ev_cls, c in m.callers.iteritems():
