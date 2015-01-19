@@ -460,6 +460,7 @@ class AppManager(object):
                 context_modules.append(context_cls.__module__)
 
                 if issubclass(context_cls, RyuApp):
+                    # コンテキスト実装クラスがRyuAppのサブクラスの場合、内部で用いられているサービスを取得する。
                     # RyuAppのサブクラスは全てスレッドに引き渡す対象となることに注意。
                     # RyuAppサブクラスに対するサービスを取得する。
                     # ryu/ryu/controller/handler.pyに定義されているget_dependent_services
