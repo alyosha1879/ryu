@@ -43,6 +43,7 @@ LOG = logging.getLogger('ryu.base.app_manager')
 
 # 辞書型
 # RyuAppのサブクラスであるアプリケーションおよびコンテキストの名前・インスタンスが登録される。
+# eg. SERVICE_BRICKS...{'SimpleSwitch13': <simple_switch_13.SimpleSwitch13 object at 0x20cea10>, 'ofp_event': <ryu.controller.ofp_handler.OFPHandler object at 0x20cec90>}
 SERVICE_BRICKS = {}
 
 # Datapathのinitメソッドにおいて呼び出される
