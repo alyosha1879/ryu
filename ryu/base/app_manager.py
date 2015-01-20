@@ -418,7 +418,10 @@ class AppManager(object):
             return clses[0][1]
         return None
 　　
-　　# applications_clsに{キー:アプリケーションのモジュール名、値:RyuAppのサブクラス}をすべて登録する
+　　# applications_clsに{キー:アプリケーションのモジュール名、値:RyuAppのサブクラス}をすべて登録する。
+　　# self.applications_cls...
+　　# {'simple_switch_13.py': <class 'simple_switch_13.SimpleSwitch13'>,
+　　# 'ryu.controller.ofp_handler': <class 'ryu.controller.ofp_handler.OFPHandler'>}
     def load_apps(self, app_lists):
         # 引数が','で区切られた場合のparse。
         # 再度app_listsにリスト化しなおす。
