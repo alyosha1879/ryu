@@ -72,6 +72,7 @@ def set_ev_cls(ev_cls, dispatchers=None):
         for e in _listify(ev_cls):
             handler.callers[e] = _Caller(_listify(dispatchers), e.__module__)
             # ev_cls...<class 'ryu.controller.ofp_event.EventOFPPacketIn'>,  _listify(dispatchers)...['main'], ev_cls.__module__...ryu.controller.ofp_event
+            # 存在しないクラスが追加されている？
         return handler
     return _set_ev_cls_dec
 
