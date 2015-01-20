@@ -485,6 +485,8 @@ class AppManager(object):
                                   if s not in app_lists])
 
     def create_contexts(self):
+        # _CONTEXTS = {'dpset': dpset.DPSet,'wsgi': WSGIApplication} であるrest.firewallを実行した場合
+        # self.contexts_cls...{'dpset': <class 'ryu.controller.dpset.DPSet'>, 'wsgi': <class 'ryu.app.wsgi.WSGIApplication'>}
         for key, cls in self.contexts_cls.items():
             
             # RyuAppのサブクラスならば、インスタンスの作成およびregister_appでSERVICE_BRICKに登録を実施。
