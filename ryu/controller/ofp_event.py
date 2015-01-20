@@ -17,6 +17,7 @@
 """
 OpenFlow event definitions.
 """
+# 実際にはofp_eventに関するクラスは動的に追加されることに注意。
 
 import inspect
 
@@ -74,6 +75,7 @@ def _create_ofp_msg_ev_from_module(ofp_parser):
         _create_ofp_msg_ev_class(cls)
 
 
+# ここのforループ中でofp_eventに関するクラスを動的に生成している。
 for ofp_mods in ofproto.get_ofp_modules().values():
     ofp_parser = ofp_mods[1]
     # print 'loading module %s' % ofp_parser
