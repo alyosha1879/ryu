@@ -40,6 +40,8 @@ from ryu import version
 from ryu.app import wsgi
 from ryu.base.app_manager import AppManager
 from ryu.controller import controller
+# controllerのimportの際にofp_eventもimportされる。
+# その際にofp_eventに動的にクラスが生成されることに注意。
 from ryu.topology import switches
 
 
