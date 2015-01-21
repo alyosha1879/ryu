@@ -70,6 +70,9 @@ def _create_ofp_msg_ev_class(msg_cls):
 def _create_ofp_msg_ev_from_module(ofp_parser):
     # print mod
     for _k, cls in inspect.getmembers(ofp_parser, inspect.isclass):
+    　　# @_set_msg_type(msg_type)でデコレータされている場合
+    　　# eg. @_set_msg_type(ofproto.OFPT_PACKET_IN)
+        #     class OFPPacketIn(MsgBase):
         if not hasattr(cls, 'cls_msg_type'):
             continue
         _create_ofp_msg_ev_class(cls)
