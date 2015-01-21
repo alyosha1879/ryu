@@ -54,15 +54,19 @@ def ofp_msg_to_ev_cls(msg_cls):
 
 
 def _create_ofp_msg_ev_class(msg_cls):
+    # nameに引数のクラスの名称を代入
     name = _ofp_msg_name_to_ev_name(msg_cls.__name__)
     # print 'creating ofp_event %s' % name
 
+　　# 重複を防ぐ
     if name in _OFP_MSG_EVENTS:
         return
-
+    # 組み込み関数 type()を使ってクラスのオブジェクトを生成することができる。
+    # type(str クラス名, tuple 基底クラス, dict プロパティ)
     cls = type(name, (EventOFPMsgBase,),
                dict(__init__=lambda self, msg:
                     super(self.__class__, self).__init__(msg)))
+    # 現在のグローバルシンボルテーブルを表す辞書。グローバル変数として上で生成したクラスを登録する。
     globals()[name] = cls
     _OFP_MSG_EVENTS[name] = cls
 
