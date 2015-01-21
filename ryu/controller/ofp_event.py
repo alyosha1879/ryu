@@ -76,6 +76,7 @@ def _create_ofp_msg_ev_from_module(ofp_parser):
 
 for ofp_mods in ofproto.get_ofp_modules().values():
     ofp_parser = ofp_mods[1]
+    # ofproto_v1_0_parser,ofproto_v1_1_parser,ofproto_v1_2_parser,ofproto_v1_3_parser に関してのループ
     # print 'loading module %s' % ofp_parser
     _create_ofp_msg_ev_from_module(ofp_parser)
 
