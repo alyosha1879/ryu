@@ -67,7 +67,7 @@ def _create_ofp_msg_ev_class(msg_cls):
                dict(__init__=lambda self, msg:
                     super(self.__class__, self).__init__(msg)))
     # 現在のグローバルシンボルテーブルを表す辞書。グローバル変数として上で生成したクラスを登録する。
-    # eg. name: 'EventNXTPacketIn', cls:<class 'ryu.controller.ofp_event.EventNXTPacketIn'>)
+    # eg. name='EventOFPPacketIn', cls=<class 'ryu.controller.ofp_event.EventOFPPacketIn'>)
     globals()[name] = cls
     _OFP_MSG_EVENTS[name] = cls
 
