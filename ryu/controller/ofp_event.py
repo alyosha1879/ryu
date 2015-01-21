@@ -74,10 +74,11 @@ def _create_ofp_msg_ev_from_module(ofp_parser):
             continue
         _create_ofp_msg_ev_class(cls)
 
-
-# ここのforループ中でofp_eventに関するクラスを動的に生成している。
+# ryu/ryu/cmd/manager.py => ryu/ryu/controller/controller.py => from ryu.controller import ofp_event 経由でimportされる。
+# モジュールのimport時に実行され、ここのforループ中でofp_eventに関するクラスを動的に生成している。
 for ofp_mods in ofproto.get_ofp_modules().values():
     ofp_parser = ofp_mods[1]
+    # ofproto_v1_0_parser,ofproto_v1_1_parser,ofproto_v1_2_parser,ofproto_v1_3_parserでループする。
     # print 'loading module %s' % ofp_parser
     _create_ofp_msg_ev_from_module(ofp_parser)
 
