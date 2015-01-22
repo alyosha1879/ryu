@@ -27,7 +27,8 @@ from struct import calcsize
 
 # !:ネットワークバイトオーダー
 # B:unsigned char (1Byte)
-# H:unsigned int  (2Byte)
+# H:unsigned short (2Byte)
+# H:unsigned int  (4Byte)
 OFP_HEADER_PACK_STR = '!BBHI'
 OFP_HEADER_SIZE = 8
 assert calcsize(OFP_HEADER_PACK_STR) == OFP_HEADER_SIZE
