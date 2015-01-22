@@ -16,7 +16,18 @@
 
 from struct import calcsize
 
+# OpenFlow Headerフォーマット
+#   0                   1                   2                   3
+#   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+#  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+#  |    Version    |     Type      |        Message Length         |
+#  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+#  |                         Transaction ID                        |
+#  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
+# !:ネットワークバイトオーダー
+# B:unsigned char (1Byte)
+# H:unsigned int  (2Byte)
 OFP_HEADER_PACK_STR = '!BBHI'
 OFP_HEADER_SIZE = 8
 assert calcsize(OFP_HEADER_PACK_STR) == OFP_HEADER_SIZE
