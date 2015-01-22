@@ -157,6 +157,9 @@ class Datapath(ofproto_protocol.ProtocolDesc):
                 if len(buf) < required_len:
                     break
 
+　　　　　　　　# バージョンおよびメッセージタイプに基づいてparserを取得。
+　　　　　　　　# parserメソッドによりOpenFlowメッセージごとのクラスのインスタンスを取得する。
+　　　　　　　　# msgはメッセージというより、メッセージクラスの引数をもとに生成されたインスタンス。
                 msg = ofproto_parser.msg(self,
                                          version, msg_type, msg_len, xid, buf)
                 # LOG.debug('queue msg %s cls %s', msg, msg.__class__)
