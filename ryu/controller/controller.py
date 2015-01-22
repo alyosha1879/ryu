@@ -151,6 +151,7 @@ class Datapath(ofproto_protocol.ProtocolDesc):
                 break
             buf += ret
             while len(buf) >= required_len:
+                # headerで取得する値は全て正の整数値
                 (version, msg_type, msg_len, xid) = ofproto_parser.header(buf)
                 required_len = msg_len
                 if len(buf) < required_len:
