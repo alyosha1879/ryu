@@ -169,10 +169,15 @@ class MsgBase(StringifyMixin):
         return buf + StringifyMixin.__str__(self)
 
     @classmethod
+    # クラスメソッドなので最初の引数がselfでなくclsになっている。
+    # 要は引数に基づいてメッセージのクラスを生成して返す。
     def parser(cls, datapath, version, msg_type, msg_len, xid, buf):
+        # 引数のdatapathを用いてクラスを生成する。
         msg_ = cls(datapath)
+        # 以下はparserの引数を元にしてクラスのメンバ変数に代入している。
         msg_.set_headers(version, msg_type, msg_len, xid)
         msg_.set_buf(buf)
+        # クラスを返す。
         return msg_
 
     def _serialize_pre(self):
