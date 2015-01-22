@@ -38,7 +38,8 @@ def header(buf):
 
 _MSG_PARSERS = {}
 
-
+# versionとmsg_parserのペアでしかないが、個々のofp_v1_x_parserでのデコレータ@_register_parser(cls)において
+# メッセージタイプごとにparserが定義されている。
 def register_msg_parser(version):
     def register(msg_parser):
         _MSG_PARSERS[version] = msg_parser
