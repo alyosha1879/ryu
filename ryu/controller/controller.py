@@ -106,7 +106,8 @@ def _deactivate(method):
             self.is_active = False
     return deactivate
 
-
+# OFCとOFSの間の通信に関するクラス。
+# 各セキュアチェネルごとに独立して存在する。
 class Datapath(ofproto_protocol.ProtocolDesc):
     def __init__(self, socket, address):
         super(Datapath, self).__init__()
@@ -124,6 +125,7 @@ class Datapath(ofproto_protocol.ProtocolDesc):
         self.id = None  # datapath_id is unknown yet
         self.ports = None
         self.flow_format = ofproto_v1_0.NXFF_OPENFLOW10
+        # 'ofp_event': <ryu.controller.ofp_handler.OFPHandler object at 0x20cec90>
         self.ofp_brick = ryu.base.app_manager.lookup_service_brick('ofp_event')
         self.set_state(handler.HANDSHAKE_DISPATCHER)
 
@@ -165,6 +167,7 @@ class Datapath(ofproto_protocol.ProtocolDesc):
                 # LOG.debug('queue msg %s cls %s', msg, msg.__class__)
                 if msg:
                     ev = ofp_event.ofp_msg_to_ev(msg)
+                    # ofp_brick => <ryu.controller.ofp_handler.OFPHandler object at 0x20cec90>
                     self.ofp_brick.send_event_to_observers(ev, self.state)
 
                     dispatchers = lambda x: x.callers[ev.__class__].dispatchers
