@@ -122,6 +122,8 @@ class Datapath(ofproto_protocol.ProtocolDesc):
         self.send_q = hub.Queue(16)
 
         self.xid = random.randint(0, self.ofproto.MAX_XID)
+        # initではdatapathIdは初期化されない。
+        # features-requestの際にdatapathIdが設定される。
         self.id = None  # datapath_id is unknown yet
         self.ports = None
         self.flow_format = ofproto_v1_0.NXFF_OPENFLOW10
