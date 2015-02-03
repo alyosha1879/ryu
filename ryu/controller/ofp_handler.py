@@ -16,7 +16,7 @@
 
 # openflowの仕様に基づいたopenflowメッセージのハンドラー。
 # ユーザが記述する各メッセージに関する処理とは独立して存在する。
-# Ryuの起動時にデフォルトで起動するRyuAppのサブクラス。
+# Ryuを無引数で起動時に呼び出されるRyuAppのサブクラス。
 
 """
 Basic OpenFlow handling including negotiation.
