@@ -1,6 +1,10 @@
 """
  Simple DHCP Server
 """
+import logging
+
+from ryu.base import app_manager
+from ryu.lib.packet import dchp
 
 class DHCPServer():
     @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
@@ -10,10 +14,10 @@ class DHCPServer():
         ofproto = datapath.ofproto
 
         pkt = packet.Packet(msg.data)
-
-        udpPacket = pkt.get_protocol(udp.udp)
+        dhcpPacket = pkt.get_protocol(dhcp.dhcp)
+        self.logger.info("dchp...%s", dhcpPacket)
  
-        if udpPacket:
+        if dhcpPacket:
            pass
 
     def handle_dhcp_request(self):
