@@ -52,7 +52,7 @@ class SimpleDHCPServer(app_manager.RyuApp):
         option = dhcp.option(tag=53 ,value='\x02')
         options = dhcp.options(option_list = [option])
  
-        dhcp_pkt = dhcp.dhcp(op=2, chaddr=dhcp_pkt.chaddr, yiaddr=dhcp_pkt.yiaddr, giaddr=dhcp_pkt.giaddr, xid=dhcp_pkt.xid, hlen=6, options=options)
+        dhcp_pkt = dhcp.dhcp(op=DHCP.DHCP_BOOT_REPLY, chaddr=dhcp_pkt.chaddr, yiaddr=dhcp_pkt.yiaddr, giaddr=dhcp_pkt.giaddr, xid=dhcp_pkt.xid, hlen=6, options=options)
 
         self._send_dhcp_packet(datapath, dhcp_pkt, port)
 
@@ -68,7 +68,7 @@ class SimpleDHCPServer(app_manager.RyuApp):
 
         options = dhcp.options(option_list = [msgOption, idOption, timeOption, subnetOption, gwOption])
 
-        dhcp_pkt = dhcp.dhcp(op=5, chaddr=dhcp_pkt.chaddr, yiaddr="192.168.1.100", giaddr=dhcp_pkt.giaddr, xid=dhcp_pkt.xid, hlen=6, options=options)
+        dhcp_pkt = dhcp.dhcp(op=DHCP.DHCP_BOOT_REPLY, chaddr=dhcp_pkt.chaddr, yiaddr="192.168.1.100", giaddr=dhcp_pkt.giaddr, xid=dhcp_pkt.xid, hlen=6, options=options)
 
         self._send_dhcp_packet(datapath, dhcp_pkt, port)
 
