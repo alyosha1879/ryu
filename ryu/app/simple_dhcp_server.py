@@ -49,7 +49,7 @@ class SimpleDHCPServer(app_manager.RyuApp):
     def handle_dhcp_discover(self, dhcp_pkt, datapath, port):
  
         # send dhcp_offer message.
-        option = dhcp.option(tag=53 ,value='\x02')
+        option = dhcp.option(tag=DHCP.DHCP_MESSAGE_TYPE_OPT ,value='\x02')
         options = dhcp.options(option_list = [option])
  
         dhcp_pkt = dhcp.dhcp(op=DHCP.DHCP_BOOT_REPLY, chaddr=dhcp_pkt.chaddr, yiaddr=dhcp_pkt.yiaddr, giaddr=dhcp_pkt.giaddr, xid=dhcp_pkt.xid, hlen=6, options=options)
@@ -63,7 +63,7 @@ class SimpleDHCPServer(app_manager.RyuApp):
         idOption = dhcp.option(tag=54, value='\xc0\xa8\x01\x01')
         subnetOption = dhcp.option(tag=1, value='\xFF\xFF\xFF\x00')
         timeOption = dhcp.option(tag=51, value='\xFF\xFF\xFF\xFF')         
-        msgOption = dhcp.option(tag=53 ,value='\x05')
+        msgOption = dhcp.option(tag=DHCP.DHCP_MESSAGE_TYPE_OPT,value='\x05')
         gwOption = dhcp.option(tag=3, value='\x0B\x0B\x0B\x01')
 
         options = dhcp.options(option_list = [msgOption, idOption, timeOption, subnetOption, gwOption])
