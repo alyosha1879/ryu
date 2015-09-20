@@ -62,6 +62,7 @@ class SimpleDHCPServer(app_manager.RyuApp):
         # send dhcp_ack message.
         subnetOption = dhcp.option(tag=DHCP.DHCP_SUBNET_MASK_OPT, value='\xFF\xFF\xFF\x00')
         gwOption = dhcp.option(tag=DHCP.DHCP_GATEWAY_ADDR_OPT, value='\x0B\x0B\x0B\x01')
+        dnsOption = dhcp.option(tag=DHCP.DHCP_DNS_SERVER_ADDR_OPT, value='\x0B\x0B\x0B\x01')
         timeOption = dhcp.option(tag=DHCP.DHCP_IP_ADDR_LEASE_TIME_OPT, value='\xFF\xFF\xFF\xFF')     
         msgOption = dhcp.option(tag=DHCP.DHCP_MESSAGE_TYPE_OPT,value='\x05')
         idOption = dhcp.option(tag=DHCP.DHCP_SERVER_IDENTIFIER_OPT, value='\xc0\xa8\x01\x01')
