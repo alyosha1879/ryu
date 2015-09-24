@@ -10,6 +10,7 @@ from ryu.controller.handler import set_ev_cls
 from ryu.controller import ofp_event
 from ryu.controller.handler import MAIN_DISPATCHER
 from ryu.lib.packet import packet
+from ryu.lib import addrconv
 
 class SimpleDHCPServer(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
@@ -31,7 +32,7 @@ class SimpleDHCPServer(app_manager.RyuApp):
         udpPacket = pkt.get_protocol(udp.udp)
 
         # check if DHCP Pacet
-        if udpPacket:
+        if udpPacket and udpPacket.src_port == 68:
             dhcpPacket = dhcp.dhcp.parser(pkt.protocols[-1])[0]
             #self.logger.info("pkt...%s", dhcpPacket)
    
@@ -49,28 +50,31 @@ class SimpleDHCPServer(app_manager.RyuApp):
     def handle_dhcp_discover(self, dhcp_pkt, datapath, port):
  
         # send dhcp_offer message.
-        msgOption = dhcp.option(tag=DHCP.DHCP_MESSAGE_TYPE_OPT, value='\x02')
-        options = dhcp.options(option_list = [msgOtion])
- 
-        dhcp_pkt = dhcp.dhcp(op=DHCP.DHCP_BOOT_REPLY, chaddr=dhcp_pkt.chaddr, yiaddr=dhcp_pkt.yiaddr, giaddr=dhcp_pkt.giaddr, xid=dhcp_pkt.xid, options=options)
+        #msgOption = dhcp.option(tag=dhcp.DHCP_MESSAGE_TYPE_OPT, value='\x02')
+        msgOption = dhcp.option(tag=53, value='\x02')
 
+        options = dhcp.options(option_list = [msgOption])
+
+        heln = len(addrconv.mac.text_to_bin(dhcp_pkt.chaddr))
+ 
+        dhcp_pkt = dhcp.dhcp(hlen=heln, op=dhcp.DHCP_BOOT_REPLY, chaddr=dhcp_pkt.chaddr, yiaddr=dhcp_pkt.yiaddr, giaddr=dhcp_pkt.giaddr, xid=dhcp_pkt.xid, options=options)
         self._send_dhcp_packet(datapath, dhcp_pkt, port)
 
 
     def handle_dhcp_request(self, dhcp_pkt, datapath, port):
 
         # send dhcp_ack message.
-        subnetOption = dhcp.option(tag=DHCP.DHCP_SUBNET_MASK_OPT, value='\xFF\xFF\xFF\x00')
-        gwOption = dhcp.option(tag=DHCP.DHCP_GATEWAY_ADDR_OPT, value='\x0B\x0B\x0B\x01')
-        dnsOption = dhcp.option(tag=DHCP.DHCP_DNS_SERVER_ADDR_OPT, value='\x0B\x0B\x0B\x01')
-        timeOption = dhcp.option(tag=DHCP.DHCP_IP_ADDR_LEASE_TIME_OPT, value='\xFF\xFF\xFF\xFF')     
-        msgOption = dhcp.option(tag=DHCP.DHCP_MESSAGE_TYPE_OPT,value='\x05')
-        idOption = dhcp.option(tag=DHCP.DHCP_SERVER_IDENTIFIER_OPT, value='\xc0\xa8\x01\x01')
+        subnetOption = dhcp.option(tag=dhcp.DHCP_SUBNET_MASK_OPT, value='\xFF\xFF\xFF\x00')
+        gwOption = dhcp.option(tag=dhcp.DHCP_GATEWAY_ADDR_OPT, value='\x0B\x0B\x0B\x01')
+        dnsOption = dhcp.option(tag=dhcp.DHCP_DNS_SERVER_ADDR_OPT, value='\x0B\x0B\x0B\x01')
+        timeOption = dhcp.option(tag=dhcp.DHCP_IP_ADDR_LEASE_TIME_OPT, value='\xFF\xFF\xFF\xFF')     
+        msgOption = dhcp.option(tag=dhcp.DHCP_MESSAGE_TYPE_OPT,value='\x05')
+        idOption = dhcp.option(tag=dhcp.DHCP_SERVER_IDENTIFIER_OPT, value='\xc0\xa8\x01\x01')
 
         options = dhcp.options(option_list = [msgOption, idOption, timeOption, subnetOption, gwOption])
+        heln = len(addrconv.mac.text_to_bin(dhcp_pkt.chaddr))
 
-        dhcp_pkt = dhcp.dhcp(op=DHCP.DHCP_BOOT_REPLY, chaddr=dhcp_pkt.chaddr, yiaddr="192.168.1.100", giaddr=dhcp_pkt.giaddr, xid=dhcp_pkt.xid, options=options)
-
+        dhcp_pkt = dhcp.dhcp(op=dhcp.DHCP_BOOT_REPLY, hlen=hlen, chaddr=dhcp_pkt.chaddr, yiaddr="192.168.1.100", giaddr=dhcp_pkt.giaddr, xid=dhcp_pkt.xid, options=options)
         self._send_dhcp_packet(datapath, dhcp_pkt, port)
 
 
