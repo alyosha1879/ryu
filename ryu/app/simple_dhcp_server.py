@@ -2,6 +2,7 @@
  Simple DHCP Server
 """
 import logging
+import netaddr
 
 from ryu.ofproto import ofproto_v1_3
 from ryu.base import app_manager
@@ -20,6 +21,7 @@ class SimpleDHCPServer(app_manager.RyuApp):
         self.hw_addr = "08:00:27:b8:0f:8d"
         self.ip_addr = "192.168.1.1" 
 
+        # use netaddr module.
         #self.gw_addr = "192.168.1.1"
         #self.ip_pool_head = "192.168.1.2"
         #self.ip_pool_tail = "192.168.1.254"
