@@ -24,7 +24,10 @@ class SimpleDHCPServer(app_manager.RyuApp):
         self.ip_pool_list = IPRange('192.168.1.2', '192.168.1.254')
         self.nameserver = IPAddress('8.8.8.8')
 
-
+    def _get_ip_address(self):
+         pass
+         #return IPAddress
+     
     @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
     def _packet_in_handler(self, ev):
         msg = ev.msg
