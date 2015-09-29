@@ -2,7 +2,7 @@
  Simple DHCP Server
 """
 import logging
-import netaddr
+from netaddr import IPRange, IPAddress
 
 from ryu.ofproto import ofproto_v1_3
 from ryu.base import app_manager
@@ -19,16 +19,11 @@ class SimpleDHCPServer(app_manager.RyuApp):
     def __init__(self, *args, **kwargs):
         super(SimpleDHCPServer, self).__init__(*args, **kwargs)
         self.hw_addr = "08:00:27:b8:0f:8d"
-        self.ip_addr = "192.168.1.1" 
+        self.ip_addr = IPAddress('192.168.1.1') 
+        self.gw_addr = IPAddress('192.168.1.1')
+        self.ip_pool_list = IPRange('192.168.1.2', '192.168.1.254')
+        self.nameserver = IPAddress('8.8.8.8')
 
-        # use netaddr module.
-        #self.gw_addr = "192.168.1.1"
-        #self.ip_pool_head = "192.168.1.2"
-        #self.ip_pool_tail = "192.168.1.254"
-        #self.subnet_mask = "255.255.255.0"
-        #self.nameserver = "8.8.8.8"
-
-        #assert gw and head and tail in same subnet.
 
     @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
     def _packet_in_handler(self, ev):
