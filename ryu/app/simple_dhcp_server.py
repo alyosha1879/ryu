@@ -19,10 +19,16 @@ class SimpleDHCPServer(app_manager.RyuApp):
     def __init__(self, *args, **kwargs):
         super(SimpleDHCPServer, self).__init__(*args, **kwargs)
         self.hw_addr = "08:00:27:b8:0f:8d"
-        self.ip_addr = IPAddress('192.168.1.1') 
+        self.dhcp_addr = IPAddress('192.168.1.2') 
         self.gw_addr = IPAddress('192.168.1.1')
-        self.ip_pool_list = IPRange('192.168.1.2', '192.168.1.254')
+        self.ip_pool_list = list(IPNetwork('192.0.1.0/24'))
         self.nameserver = IPAddress('8.8.8.8')
+        
+        assert self.dhcp_addr in self.ip_pool_list 
+        assert self.gw_addr in self.ip_pool_list
+        
+        self.ip_pool_list.remove(self.dhcp_addr)
+        self.ip_pool_list.remove(self.gw_addr)
 
     def _get_ip_address(self):
          pass
