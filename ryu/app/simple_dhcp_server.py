@@ -2,6 +2,7 @@
  Simple DHCP Server
 """
 import logging
+from netaddr import IPNetwork, IPAddress
 
 from ryu.ofproto import ofproto_v1_3
 from ryu.base import app_manager
@@ -18,16 +19,23 @@ class SimpleDHCPServer(app_manager.RyuApp):
     def __init__(self, *args, **kwargs):
         super(SimpleDHCPServer, self).__init__(*args, **kwargs)
         self.hw_addr = "08:00:27:b8:0f:8d"
-        self.ip_addr = "192.168.1.1" 
+        self.dhcp_addr = IPAddress('192.168.1.2') 
+        self.gw_addr = IPAddress('192.168.1.1')
+        self.broadcast_addr = IPAddress('192.168.1.255')
+        self.ip_pool_list = list(IPNetwork('192.168.1.0/24'))
+        self.nameserver = IPAddress('8.8.8.8')
+         
+        assert self.dhcp_addr in self.ip_pool_list 
+        assert self.gw_addr in self.ip_pool_list
+        
+        self.ip_pool_list.remove(self.dhcp_addr)
+        self.ip_pool_list.remove(self.gw_addr)
+        self.ip_pool_list.remove(self.broadcast_addr)
 
-        #self.gw_addr = "192.168.1.1"
-        #self.ip_pool_head = "192.168.1.2"
-        #self.ip_pool_tail = "192.168.1.254"
-        #self.subnet_mask = "255.255.255.0"
-        #self.nameserver = "8.8.8.8"
-
-        #assert gw and head and tail in same subnet.
-
+    def _get_ip_address(self):
+         pass
+         #return IPAddress
+     
     @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
     def _packet_in_handler(self, ev):
         msg = ev.msg
@@ -57,14 +65,11 @@ class SimpleDHCPServer(app_manager.RyuApp):
     def handle_dhcp_discover(self, dhcp_pkt, datapath, port):
  
         # send dhcp_offer message.
-        #msgOption = dhcp.option(tag=dhcp.DHCP_MESSAGE_TYPE_OPT, value='\x02')
-        msgOption = dhcp.option(tag=53, value='\x02')
-
+        msgOption = dhcp.option(tag=dhcp.DHCP_MESSAGE_TYPE_OPT, value='\x02')
         options = dhcp.options(option_list = [msgOption])
+        hlen = len(addrconv.mac.text_to_bin(dhcp_pkt.chaddr))
 
-        heln = len(addrconv.mac.text_to_bin(dhcp_pkt.chaddr))
- 
-        dhcp_pkt = dhcp.dhcp(hlen=heln, op=dhcp.DHCP_BOOT_REPLY, chaddr=dhcp_pkt.chaddr, yiaddr=dhcp_pkt.yiaddr, giaddr=dhcp_pkt.giaddr, xid=dhcp_pkt.xid, options=options)
+        dhcp_pkt = dhcp.dhcp(hlen=hlen, op=dhcp.DHCP_BOOT_REPLY, chaddr=dhcp_pkt.chaddr, yiaddr=dhcp_pkt.yiaddr, giaddr=dhcp_pkt.giaddr, xid=dhcp_pkt.xid, options=options)
         self._send_dhcp_packet(datapath, dhcp_pkt, port)
 
 
@@ -79,9 +84,10 @@ class SimpleDHCPServer(app_manager.RyuApp):
         idOption = dhcp.option(tag=dhcp.DHCP_SERVER_IDENTIFIER_OPT, value='\xc0\xa8\x01\x01')
 
         options = dhcp.options(option_list = [msgOption, idOption, timeOption, subnetOption, gwOption])
-        heln = len(addrconv.mac.text_to_bin(dhcp_pkt.chaddr))
+        hlen = len(addrconv.mac.text_to_bin(dhcp_pkt.chaddr))
+        client_ip_addr = str(self.ip_pool_list.pop())
 
-        dhcp_pkt = dhcp.dhcp(op=dhcp.DHCP_BOOT_REPLY, hlen=hlen, chaddr=dhcp_pkt.chaddr, yiaddr="192.168.1.100", giaddr=dhcp_pkt.giaddr, xid=dhcp_pkt.xid, options=options)
+        dhcp_pkt = dhcp.dhcp(op=dhcp.DHCP_BOOT_REPLY, hlen=hlen, chaddr=dhcp_pkt.chaddr, yiaddr=client_ip_addr, giaddr=dhcp_pkt.giaddr, xid=dhcp_pkt.xid, options=options)
         self._send_dhcp_packet(datapath, dhcp_pkt, port)
 
 
@@ -89,7 +95,7 @@ class SimpleDHCPServer(app_manager.RyuApp):
 
         pkt = packet.Packet()
         pkt.add_protocol(ethernet.ethernet(src=self.hw_addr, dst=dhcp_pkt.chaddr))
-        pkt.add_protocol(ipv4.ipv4(src=self.ip_addr, dst="255.255.255.255", proto=17))
+        pkt.add_protocol(ipv4.ipv4(src=self.dhcp_addr, dst="255.255.255.255", proto=17))
         pkt.add_protocol(udp.udp(src_port=67, dst_port=68))
         pkt.add_protocol(dhcp_pkt)
 
