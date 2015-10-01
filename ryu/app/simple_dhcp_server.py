@@ -2,7 +2,7 @@
  Simple DHCP Server
 """
 import logging
-from netaddr import IPRange, IPAddress
+from netaddr import IPNetwork, IPAddress
 
 from ryu.ofproto import ofproto_v1_3
 from ryu.base import app_manager
@@ -21,7 +21,7 @@ class SimpleDHCPServer(app_manager.RyuApp):
         self.hw_addr = "08:00:27:b8:0f:8d"
         self.dhcp_addr = IPAddress('192.168.1.2') 
         self.gw_addr = IPAddress('192.168.1.1')
-        self.ip_pool_list = list(IPNetwork('192.0.1.0/24'))
+        self.ip_pool_list = list(IPNetwork('192.168.1.0/24'))
         self.nameserver = IPAddress('8.8.8.8')
         
         assert self.dhcp_addr in self.ip_pool_list 
