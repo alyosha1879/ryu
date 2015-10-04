@@ -19,14 +19,16 @@ class SimpleDHCPServer(app_manager.RyuApp):
 
     def __init__(self, *args, **kwargs):
         super(SimpleDHCPServer, self).__init__(*args, **kwargs)
+
         self.hw_addr = "08:00:27:b8:0f:8d"
         self.dhcp_addr = IPAddress('192.168.1.2')
         self.gw_addr = IPAddress('192.168.1.1')
         self.broadcast_addr = IPAddress('192.168.1.255')
-        self.ip_pool_list = list(IPNetwork('192.168.1.0/24'))
-        self.nameserver = IPAddress('8.8.8.8')
+        self.ip_network = IPNetwork('192.168.1.0/24')
+        self.ip_pool_list = list(self.ip_network)
+        self.dns_addr = IPAddress('8.8.8.8')
 
-        assert self.dhcp_addr in self.ip_pool_lis
+        assert self.dhcp_addr in self.ip_pool_list
         assert self.gw_addr in self.ip_pool_list
 
         self.ip_pool_list.remove(self.dhcp_addr)
@@ -59,8 +61,8 @@ class SimpleDHCPServer(app_manager.RyuApp):
     def handle_dhcp_discover(self, dhcp_pkt, datapath, port):
 
         # send dhcp_offer message.
-        msgOption = dhcp.option(tag=dhcp.DHCP_MESSAGE_TYPE_OPT, value='\x02')
-        options = dhcp.options(option_list=[msgOption])
+        msg_option = dhcp.option(tag=dhcp.DHCP_MESSAGE_TYPE_OPT, value='\x02')
+        options = dhcp.options(option_list=[msg_option])
         hlen = len(addrconv.mac.text_to_bin(dhcp_pkt.chaddr))
 
         dhcp_pkt = dhcp.dhcp(hlen=hlen, op=dhcp.DHCP_BOOT_REPLY,
@@ -73,21 +75,23 @@ class SimpleDHCPServer(app_manager.RyuApp):
     def handle_dhcp_request(self, dhcp_pkt, datapath, port):
 
         # send dhcp_ack message.
-        subnetOption = dhcp.option(tag=dhcp.DHCP_SUBNET_MASK_OPT,
-                                   value='\xFF\xFF\xFF\x00')
-        gwOption = dhcp.option(tag=dhcp.DHCP_GATEWAY_ADDR_OPT,
-                               value='\x0B\x0B\x0B\x01')
-        dnsOption = dhcp.option(tag=dhcp.DHCP_DNS_SERVER_ADDR_OPT,
-                                value='\x0B\x0B\x0B\x01')
-        timeOption = dhcp.option(tag=dhcp.DHCP_IP_ADDR_LEASE_TIME_OPT,
+        subnet_option = dhcp.option(tag=dhcp.DHCP_SUBNET_MASK_OPT,
+                                  value=addrconv.ipv4.text_to_bin
+                                  (self.ip_network.netmask))
+        gw_option = dhcp.option(tag=dhcp.DHCP_GATEWAY_ADDR_OPT,
+                               value=addrconv.ipv4.text_to_bin(self.gw_addr))
+        dns_option = dhcp.option(tag=dhcp.DHCP_DNS_SERVER_ADDR_OPT,
+                                value=addrconv.ipv4.text_to_bin(self.dns_addr))
+        time_option = dhcp.option(tag=dhcp.DHCP_IP_ADDR_LEASE_TIME_OPT,
+                                 # rease_time: infinity
                                  value='\xFF\xFF\xFF\xFF')
-        msgOption = dhcp.option(tag=dhcp.DHCP_MESSAGE_TYPE_OPT,
+        msg_option = dhcp.option(tag=dhcp.DHCP_MESSAGE_TYPE_OPT,
                                 value='\x05')
-        idOption = dhcp.option(tag=dhcp.DHCP_SERVER_IDENTIFIER_OPT,
-                               value='\xc0\xa8\x01\x01')
-
-        options = dhcp.options(option_list=[msgOption,
-                               idOption, timeOption, subnetOption, gwOption])
+        id_option = dhcp.option(tag=dhcp.DHCP_SERVER_IDENTIFIER_OPT,
+                               value=addrconv.ipv4.text_to_bin(self.dhcp_addr))
+        options = dhcp.options(option_list=[msg_option, id_option,
+                               time_option, subnet_option,
+                               gw_option, dns_option])
         hlen = len(addrconv.mac.text_to_bin(dhcp_pkt.chaddr))
         client_ip_addr = str(self.ip_pool_list.pop())
 
