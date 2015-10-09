@@ -43,11 +43,12 @@ class SimpleDHCPServer(app_manager.RyuApp):
         in_port = msg.match['in_port']
 
         pkt = packet.Packet(msg.data)
-        udpPacket = pkt.get_protocol(udp.udp)
+        dhcpPacket = pkt.get_protocol(dhcp.dhcp)
 
-        # check if DHCP Pacet
-        if udpPacket and udpPacket.src_port == 68:
-            dhcpPacket = dhcp.dhcp.parser(pkt.protocols[-1])[0]
+        if not dhcpPacket:
+            return
+
+        if dhcpPacket:
             msgType = dhcpPacket.options.option_list[0].value
 
             if msgType == '\x01':
